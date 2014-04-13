@@ -1,6 +1,6 @@
 # Enabler
 
-TODO: Write a gem description
+Feature enabler
 
 ## Installation
 
