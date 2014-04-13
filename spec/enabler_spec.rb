@@ -32,4 +32,24 @@ describe Enabler do
 			Enabler.disable! :dance, model
 		end
 	end
+
+	describe ".rules" do
+		context "with no rules set" do
+			specify { Enabler.rules.should be == [] }
+		end
+
+		context "with rules set" do
+			let(:rule_def) { Proc.new{ true} }
+			before do
+				Enabler.define_rule! :boogie, &rule_def
+			end
+			after do
+				Enabler.class_variable_set(:@@rules, [])
+			end
+      
+			specify { Enabler.rules.length.should be == 1 }
+			specify { Enabler.rule(:boogie).feature.should == :boogie }
+			specify { Enabler.rule(:boogie).definition.should == rule_def }
+		end
+	end
 end
