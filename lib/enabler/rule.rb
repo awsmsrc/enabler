@@ -1,15 +1,15 @@
 module Enabler
-	class Rule
+  class Rule
 
-		attr_reader :feature, :definition
+    attr_reader :feature, :definition
 
-		def initialize(feature, definition)
-			@feature, @definition = feature, definition
-		end
+    def initialize(feature, definition)
+      @feature, @definition = feature, definition
+    end
 
-		def enabled?(model)
-			definition.call(model)
-		end
+    def enabled?(model)
+      definition.call(model)
+    end
 
-	end
+  end
 end
