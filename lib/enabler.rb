@@ -29,19 +29,19 @@ module Enabler
   end
   
   def self.enable!(feature, object)
-  	store.add!(feature, object)
+    store.add!(feature, object)
   end
   
   def self.disable!(feature, object)
-  	store.remove!(feature, object)
+    store.remove!(feature, object)
   end
   
   def self.rules
-  	@@rules ||= [] 
+    @@rules ||= [] 
   end
   
   def self.rule(feature)
-  	self.rules.select { |item| item.feature == feature.to_sym }.first
+    self.rules.select { |item| item.feature == feature.to_sym }.first
   end
   
   def self.define_rule!(feature, &block)
