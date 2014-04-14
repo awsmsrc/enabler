@@ -26,7 +26,7 @@ module Enabler
 		sym = feature.to_sym
 		r = self.rule(sym)
 		return false unless r
-		r.enabled?(model)
+		r.enabled?(object)
 	end
 
 	def self.enable!(feature, object)
