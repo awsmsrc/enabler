@@ -24,6 +24,21 @@ describe Enabler do
 			store.should_receive(:add!).with(:dance, model)
 			Enabler.enable! :dance, model
 		end
+		context "with after callbacks" do
+			before do
+				model.stub(:stubbed).and_return true
+				Enabler.configure do
+					after_enabling :dance do |object|
+						object.stubbed
+					end
+				end
+			end
+			it "calls the after_enabling callback" do
+				model.stub :stubbed
+				model.should_receive :stubbed
+				Enabler.enable! :dance, model
+			end
+		end
 	end
 
 	describe ".disable!" do
@@ -33,23 +48,26 @@ describe Enabler do
 		end
 	end
 
-	describe ".rules" do
+	describe "rules" do
 		context "with no rules set" do
-			specify { Enabler.rules.should be == [] }
+			specify { Enabler.config.rules.should be == [] }
 		end
 
 		context "with rules set" do
-			let(:rule_def) { Proc.new{ true} }
 			before do
-				Enabler.define_rule! :boogie, &rule_def
+				Enabler.configure do
+					rule :boogie do 
+						true
+					end
+				end
 			end
 			after do
 				Enabler.class_variable_set(:@@rules, [])
 			end
       
-			specify { Enabler.rules.length.should be == 1 }
-			specify { Enabler.rule(:boogie).feature.should == :boogie }
-			specify { Enabler.rule(:boogie).definition.should == rule_def }
+			specify { Enabler.config.rules.length.should be == 1 }
+			specify { Enabler::Rule.find(:boogie).first.feature.should == :boogie }
+			specify { Enabler::Rule.find(:boogie).first.definition.call.should be_true }
 		end
 	end
 end

@@ -1,52 +1,55 @@
+require "singleton"
 require "enabler/version"
+
+require "enabler/config"
 require "enabler/storage/redis"
 require "enabler/errors/rule_already_defined_error"
 require "enabler/rule"
 
 module Enabler
+  class << self 
 
-  def self.store=(val)
-    @@store = val
-  end
-  
-  def self.store
-    @@store
-  end
-  
-  def self.enabled?(feature, object)
-    enabled_via_rule?(feature, object) || enabled_via_storage?(feature, object)
-  end
-  
-  def self.enabled_via_storage?(feature, object)
-    store.enabled?(feature, object)
-  end
-  
-  def self.enabled_via_rule?(feature, object)
-    sym = feature.to_sym
-    r = self.rule(sym)
-    return false unless r
-    r.enabled?(object)
-  end
-  
-  def self.enable!(feature, object)
-    store.add!(feature, object)
-  end
-  
-  def self.disable!(feature, object)
-    store.remove!(feature, object)
-  end
-  
-  def self.rules
-    @@rules ||= [] 
-  end
-  
-  def self.rule(feature)
-    self.rules.select { |item| item.feature == feature.to_sym }.first
-  end
-  
-  def self.define_rule!(feature, &block)
-    sym = feature.to_sym
-    raise Errors::RuleAlreadyDefinedError if self.rule(sym)
-    self.rules << Rule.new(sym, block)
+    def store=(val)
+      @@store = val
+    end
+
+    def store
+      @@store
+    end
+
+    def enable!(feature, object)
+      store.add!(feature, object)
+      config.after_enablings[feature].call(object) if config.after_enablings[feature]
+    end
+
+    def disable!(feature, object)
+      store.remove!(feature, object)
+      config.after_disablings[feature].call(object) if config.after_disablings[feature]
+    end
+
+    def enabled?(feature, object)
+      enabled_via_rule?(feature, object) || enabled_via_storage?(feature, object)
+    end
+
+    def config
+      Enabler::Config.instance
+    end
+
+    def configure(&block)
+      config.instance_eval &block
+    end
+
+    private
+
+    def enabled_via_storage?(feature, object)
+      store.enabled?(feature, object)
+    end
+
+    def enabled_via_rule?(feature, object)
+      Array(Rule.find(feature.to_sym)).map do |r| 
+        r.enabled? object 
+      end.include? true
+    end
+
   end
 end
