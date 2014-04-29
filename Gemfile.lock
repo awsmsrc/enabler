@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    enabler (0.0.3)
+    enabler (0.0.5)
       redis
 
 GEM

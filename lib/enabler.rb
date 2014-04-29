@@ -9,12 +9,8 @@ require "enabler/rule"
 module Enabler
   class << self 
 
-    def store=(val)
-      @@store = val
-    end
-
     def store
-      @@store
+      config.store
     end
 
     def enable!(feature, object)

@@ -2,8 +2,14 @@ module Enabler
   class Config
     include Singleton
 
+    attr_accessor :store
+
     def rule(feature, &block)
       rules << Rule.new(feature.to_sym, block)
+    end
+
+    def persistence(val)
+      self.store = val
     end
 
     def after_enabling(feature, &block)
@@ -19,11 +25,11 @@ module Enabler
     end
 
     def after_enablings
-      @after_enables ||= {}
+      @after_enablings ||= {}
     end
 
     def after_disablings
-      @after_enables ||= {}
+      @after_disablings ||= {}
     end
 
   end

@@ -10,7 +10,7 @@ describe Enabler do
     Enabler.config.instance_variable_set(:@after_disablings, {})
   end
 
-  before { Enabler.store = store }
+  before { Enabler.config.store = store }
 
   describe ".enabled?" do
 

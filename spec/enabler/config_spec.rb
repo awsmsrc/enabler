@@ -20,7 +20,7 @@ describe Enabler::Config do
   end
 
   describe "after_disabling" do
-    before { subject.after_enabling :dance, &processor }
+    before { subject.after_disabling :dance, &processor }
     specify { subject.after_disablings[:dance].should == processor }
   end
 end
