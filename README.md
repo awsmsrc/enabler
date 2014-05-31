@@ -23,26 +23,16 @@ Or install it yourself as:
 
 ## Usage
 
-### Configuration
-
-Currently there is only one storage adapter - Redis
+### Enable a feature
 
 ```Ruby
-Enabler.store = Enabler::Storage::Redis.new($redis)
+Enabler.enable! :new_feature, User.first
 ```
 
-### Rules
+### Disable a feature
 
 ```Ruby
-Enabler.define_rule! :dance do |object|
-  object.is_cool?
-end
-```
-
-### Specific Models
-
-```Ruby
-Enabler.enable! :dance, User.first
+Enabler.disable! :new_feature, User.first
 ```
 
 ### Check if feature enabled for object
@@ -56,7 +46,52 @@ class NewFeatureController < ActionController::Base
 end
 ```
 
+### Configuration
 
+Currently there is only one storage adapter - Redis
+
+```Ruby
+Enabler.configure do
+  persistence Enabler::Storage::Redis.new($redis)
+  
+  after_enabling :new_feature do |model|
+    send_notification_email(model)
+  end
+  
+  after_disabling :new_feature do |model|
+    model.remove_feature_specific_db_records
+  end
+  
+  rule :drive do |model|
+    model.admin?
+  end
+end
+```
+
+#### Rules
+
+Rules are useful if you want to set a feature globally based on an objects state.
+For example enabling employee access to new features before rolling out to the public
+
+```Ruby
+Enabler.configure do
+  rule :new_feature do |object|
+    object.is_employee?
+  end
+end
+```
+
+#### Callbacks
+
+You can define callbacks that are triggered after enabling or disabling features, this is useful fir things like sending emails or adding feature specific records to the db.
+
+```Ruby
+Enabler.configure do
+  after_enabling :new_feature do |model|
+    send_notification_email(model)
+  end
+end
+```
 
 ## TODO
 * caching
@@ -65,7 +100,6 @@ end
 * ActiveRecord storage
 * Mongo storage
 * In memory storage
-
 
 ## Contributing
 
