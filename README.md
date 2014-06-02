@@ -100,6 +100,7 @@ end
 * ActiveRecord storage
 * Mongo storage
 * In memory storage
+* scopes
 
 ## Contributing
 
