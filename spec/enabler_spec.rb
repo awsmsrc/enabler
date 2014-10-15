@@ -90,4 +90,5 @@ describe Enabler do
       specify { Enabler::Rule.find(:boogie).first.definition.call.should be_true }
     end
   end
+
 end

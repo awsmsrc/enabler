@@ -20,11 +20,19 @@ module Enabler
 				redis.sismember key(feature, model), model.id 
 			end
 
+      def all_enabled(feature, klass)
+        redis.smembers key_from_class(feature, klass)
+      end
+
 			private
 
 			def key(feature, model)
-				"enabler::#{underscore model.class.to_s}::#{underscore feature.to_s}"
+        key_from_class(feature, model.class)
 			end
+
+      def key_from_class(feature, klass)
+				"enabler::#{underscore klass.to_s}::#{underscore feature.to_s}"
+      end
 
 			#taking from active support
 			def underscore(string)

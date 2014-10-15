@@ -27,6 +27,10 @@ module Enabler
       enabled_via_rule?(feature, object) || enabled_via_storage?(feature, object)
     end
 
+    def all_manually_enabled(feature, object_class)
+      store.all_enabled(feature, object_class.new)
+    end
+
     def config
       Enabler::Config.instance
     end
