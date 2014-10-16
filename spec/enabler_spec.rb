@@ -1,4 +1,4 @@
-require 'enabler'
+require 'spec_helper'
 
 describe Enabler do
   let(:store) { double('Store', add!:true, remove!:true) }
@@ -88,6 +88,13 @@ describe Enabler do
       specify { Enabler.config.rules.length.should be == 1 }
       specify { Enabler::Rule.find(:boogie).first.feature.should == :boogie }
       specify { Enabler::Rule.find(:boogie).first.definition.call.should be_true }
+    end
+  end
+
+  describe "all_manually_enabled" do
+    it "calls all_enabled on the store" do
+      store.should_receive(:all_enabled).with(:dance, Model)
+      Enabler.all_manually_enabled(:dance, Model)
     end
   end
 

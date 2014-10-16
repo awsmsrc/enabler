@@ -1,5 +1,5 @@
+require 'spec_helper'
 require 'mock_redis'
-require 'enabler'
 
 describe Enabler::Storage::Redis do
   let(:redis) { MockRedis.new }
@@ -35,6 +35,14 @@ describe Enabler::Storage::Redis do
     end
     context "when id is not in set" do
       specify { subject.enabled?(:dance, model).should be_false }
+    end
+  end
+
+  describe "#all_enabled" do
+    context "when there are enabled models" do
+      before { subject.add!(:dance, model) }
+      specify { subject.all_enabled(:dance, Model).should eq(["1"]) }
+      specify { subject.all_enabled(:sing, Model).should eq([]) }
     end
   end
 end
