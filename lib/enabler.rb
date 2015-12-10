@@ -1,14 +1,13 @@
-require "singleton"
-require "enabler/version"
+require 'singleton'
+require 'enabler/version'
 
-require "enabler/config"
-require "enabler/storage/redis"
-require "enabler/errors/rule_already_defined_error"
-require "enabler/rule"
+require 'enabler/config'
+require 'enabler/storage/redis'
+require 'enabler/errors/rule_already_defined_error'
+require 'enabler/rule'
 
 module Enabler
-  class << self 
-
+  class << self
     def store
       config.store
     end
@@ -46,10 +45,9 @@ module Enabler
     end
 
     def enabled_via_rule?(feature, object)
-      Array(Rule.find(feature.to_sym)).map do |r| 
-        r.enabled? object 
+      Array(Rule.find(feature.to_sym)).map do |r|
+        r.enabled? object
       end.include? true
     end
-
   end
 end

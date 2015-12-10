@@ -31,6 +31,5 @@ module Enabler
     def after_disablings
       @after_disablings ||= {}
     end
-
   end
 end
